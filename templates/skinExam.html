@@ -1,0 +1,372 @@
+<!DOCTYPE HTML>
+<!--
+	Helios by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Self examination</title>
+        
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    
+		<link rel="stylesheet" href="static/assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="static/assets/css/noscript.css" /></noscript>
+    <link
+      class="jsbin"
+      href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/base/jquery-ui.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <script
+    class="jsbin"
+    src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"
+  ></script>
+  <script
+    class="jsbin"
+    src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.0/jquery-ui.min.js"
+  ></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.3/jspdf.min.js"></script>
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
+
+<script>
+  function readURL(input) {
+    if (input.files && input.files[0]) {
+      var reader = new FileReader();
+  
+      reader.onload = function (e) {
+        $('#blah').attr('src', e.target.result).width(200).height(200);
+      };
+  
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+</script>
+        <script>
+            function getPDF(){
+            
+            var HTML_Width = $("#container").width();
+            var HTML_Height = $("#container").height();
+            var top_left_margin = 15;
+            var PDF_Width = HTML_Width+(top_left_margin*2);
+            var PDF_Height = (PDF_Width*1.5)+(top_left_margin*2);
+            var canvas_image_width = HTML_Width;
+            var canvas_image_height = HTML_Height;
+            
+            var totalPDFPages = Math.ceil(HTML_Height/PDF_Height)-1;
+            
+            
+            
+            html2canvas($("#container")[0],{allowTaint:true}).then(function(canvas) {
+                canvas.getContext('2d');
+                
+                console.log(canvas.height+"  "+canvas.width);
+                
+                
+                var imgData = canvas.toDataURL("image/jpeg", 1.0);
+                var pdf = new jsPDF('p', 'pt',  [PDF_Width, PDF_Height]);
+                pdf.addImage(imgData, 'JPG', top_left_margin, top_left_margin,canvas_image_width,canvas_image_height);
+                
+                
+                for (var i = 1; i <= totalPDFPages; i++) { 
+                    pdf.addPage(PDF_Width, PDF_Height);
+                    pdf.addImage(imgData, 'JPG', top_left_margin, -(PDF_Height*i)+(top_left_margin*4),canvas_image_width,canvas_image_height);
+                }
+                
+                pdf.save("TestReport.pdf");
+            });
+            };
+                </script>
+
+
+<style>
+  .d1{
+    background-color: rgb(248, 248, 218);
+  }
+  .d2{
+    width: 1150px;
+    height: 150px;
+    margin: 10px;
+    background-color: #F69770;
+  }
+  .n1{
+    color: white;
+    position: relative;
+    top:28%;
+    right: 40%;
+    font-size: 50px;
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  }
+  .n2{
+    position: relative;
+    padding-left: 60px; 
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 20px;
+    margin:0;
+  }
+  .i1{
+    position: relative;
+    bottom: 95px;
+    width: 300px ;
+    height: 200px;
+    padding-right: 60px;
+    float: right;
+  }
+  .n3{
+    position: relative;
+    bottom: 120px;
+    left: 77%;
+    padding-right: 60px;
+  }
+  .n4{
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  }
+</style>
+	</head>
+<body class="left-sidebar is-preload">
+    <div id="page-wrapper">
+
+        <!-- Header -->
+            <div id="header">
+
+                <!-- Inner -->
+                    <div class="inner">
+                        <header>
+                            <h1><a href="index.html" id="logo">SkinXpert</a></h1>
+                        </header>
+                    </div>
+
+                <!-- Nav -->
+                    <nav id="nav">
+                        <ul>
+                            <li><a href="{{url_for('index')}}">Home</a></li>
+                            <li><a href="{{url_for('support')}}">Support Groups</a></li>
+                            <li><a href="{{url_for('derm')}}">Dermatologist Nearby</a></li>
+                            <li><a href="{{url_for('skincan')}}">What are Skin disorders?</a></li>
+                            <li><a href="{{url_for('prev')}}">Prevention</a></li>
+                            <form action="{{url_for('logout')}}"><button type="submit" class="btn btn-secondary mx-1">Logout</button></form>
+                        </ul>
+                    </nav>
+
+            </div>
+            <div class="wrapper style1">
+
+                <div class="container">
+                            <article id="main"class="special">
+                                <header>
+                                    <h2><a >Self Examination </a></h2>
+                                    <a class="image featured"><img src="static/images/mobimg.jpg" alt="" /></a>
+                                    <p><a href="#">Concerned about a skin condition? Without leaving your chair, upload a photo of the affected area and learn about the skin condition in under a minute. Try it right now! This tool allows you to upload a photo of your skin and the model will identify and classify skin conditions based on the image. </a></p>
+            <center>
+                <div class="col-md-6" >
+                    <form class="form-group" action="/skinExamResult" method='POST' enctype="multipart/form-data">
+                        <label style="font-size: 20px;"><b>Upload Image</b></label>
+                        
+                        <br>
+                        <style>
+                            .form-group{
+                            width: 400px;
+                        }
+                        </style>
+                        <div class="input-group">
+                            <span class="input-group-btn">
+                                <span class="btn btn-default btn-file">
+                                    <marks>Browse…</marks> <input type="file" id="imgInp" name="file" onchange="readURL(this);" required>
+                                    <br><br>
+                                    <img id="blah" src="#" alt="" />
+                                </span>
+                            </span>
+                            
+                            
+                        </div>
+                        <br>
+                        <input type='submit' id='upload' class='btn btn-lg btn-success' value='Upload'>
+                    </form>
+                </div>
+            </center>
+            <br><br><br>
+            
+            {% if(msg ==1) %}
+            <div id="container">
+                <br>
+                <div class = "d1">
+                  <div class ="d2">
+                    <h1 class="n1">SkinXpert</h1>
+                  </div>
+                
+                <h1 style="font-size: 35px;"><center><b>Test Results</b></center></h1>
+                <br><br>
+                <p class = "n2"><b>{{ name }}</b></p>
+                <br>
+                <p class = "n2"><b>{{ email }}</b></p>
+                <br>
+                <p class = "n2"><b>{{ gender }}, {{ age }}</b></p>
+                <img class = "i1" id="picture" src="data:image/jpeg;base64,{{ img_data }}" alt="User Image">
+                <p class = "n3"><b>Image of affected skin area</b></p>
+                <br><br>
+                <canvas id="myChart"></canvas>
+            
+            <script type ="text/javascript">
+            
+            var ctx = document.getElementById("myChart").getContext("2d");
+            
+            var mybarChart = new Chart(ctx, {
+              type: 'bar',
+              data: {
+                labels: ['Skin Diseases'],
+                datasets: [{
+                  label: 'Acne/Rosacea',
+                  backgroundColor: '#BA4B4B',
+                  data: [{{ v1 }}]
+                }, {
+                  label: 'Melanoma Skin Cancer Nevi and Moles',
+                  backgroundColor: '#E0C25C',
+                  data: [{{ v2 }}]
+                }, {
+                  label: 'Psoriasis/Lichen Planus',
+                  backgroundColor: '#56B486',
+                  data: [{{ v3 }}]
+                },{
+                  label: 'Vasculitis',
+                  backgroundColor: '#506FB4',
+                  data: [{{ v4 }}]
+                }]
+              },
+            
+              options: {
+                legend: {
+                  display: true,
+                  position: 'bottom',
+                  labels: {
+                    fontColor: "#000080",
+                  }
+                },
+                scales: {
+                  yAxes: [{
+                    ticks: {
+                      beginAtZero: true
+                    }
+                  }]
+                }
+              }
+            });
+            
+            
+            </script>
+            <br><br>
+           
+          <p style="font-family:Arial, Helvetica, sans-serif; font-size: 17px; text-align: center; padding: 5px;">After assessing the image uploaded by you, our model says that you are suffering with <span class="n4">{{ m1 }}</span> with a prediction probability of <span class="n4">{{ m }}</span></p>
+            </div>
+          </div>
+          <br>
+                <center><button type="button" class="btn btn-primary" onclick="getPDF()">Download Report</button>
+                </center>
+                <br>
+           
+            <br><br> 
+            {% endif %}
+
+                <!-- Optional JavaScript; choose one of the two! -->
+            
+                <!-- Option 1: Bootstrap Bundle with Popper -->
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+                    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+                    crossorigin="anonymous"></script>
+            
+                <!-- Option 2: Separate Popper and Bootstrap JS -->
+                <!--
+                <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+                -->
+    <!-- Footer -->
+			<div id="footer">
+				<div class="container">
+					<div class="row">
+
+						<!-- Tweets -->
+							<section class="col-6 col-12-mobile">
+								<header>
+									<h2 class="icon brands fa-linkedin-in circled"><span class="label">Linkedin</span></h2>
+								</header>
+								<ul class="divided">
+									<li>
+										<article class="Linkedin">
+											<a href="https://www.linkedin.com" >Dilrose Reji</a>
+										</article>
+									</li>
+									<li>
+										<article class="Linkedin">
+											<a href="https://www.linkedin.com" >Sneha Mary Bency</a>
+										</article>
+									</li>
+									<li>
+										<article class="Linkedin">
+											<a href="https://www.linkedin.com" >Akshat Sharma</a>
+										</article>
+									</li>
+									
+								</ul>
+							</section>
+
+						<!-- Posts -->
+					
+
+						<!-- Photos -->
+							<section class="col-6 col-12-mobile">
+								<header>
+									<h2 class="icon brands fa-github circled"><span class="label">Github</span></h2>
+								</header>
+								<ul class="divided">
+									<li>
+										<article class="Github">
+											<a href="https://github.com/dilroseR" >Dilrose Reji</a>
+										</article>
+									</li>
+									<li>
+										<article class="Github">
+											<a href="https://github.com/snehaben24" >Sneha Mary Bency</a>
+										</article>
+									</li>
+									<li>
+										<article class="Github">
+											<a href="https://github.com/Akshat150600" >Akshat Sharma</a>
+										</article>
+									</li>
+									
+								</ul>
+							</section>
+
+		</div>
+		<hr/>
+		<div class="row">
+			<div class="col-12">
+				<!-- Copyright -->
+					<div class="copyright">
+						<ul class="menu">
+							<li>&copy; Untitled. All rights reserved.</li>
+						</ul>
+					</div>
+
+			</div>
+
+		</div>
+	</div>
+</div>
+
+</div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.dropotron.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>
